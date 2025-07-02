@@ -141,8 +141,7 @@ public class SaveSystem : MonoBehaviour
     }
 
 
-    // Called by Login Button
-    public void OnLoginButton()
+    public async void OnLoginButton()
     {
         string enteredUsername = usernameInput.text.Trim();
 
@@ -152,26 +151,33 @@ public class SaveSystem : MonoBehaviour
             return;
         }
 
-        firestore.Document($"save_data/{enteredUsername}").GetSnapshotAsync().ContinueWith(task =>
+        try
         {
-            if (task.Result.Exists)
+            DocumentSnapshot snapshot = await firestore.Document($"save_data/{enteredUsername}").GetSnapshotAsync();
+
+            if (snapshot.Exists)
             {
-                var data = task.Result.ConvertTo<SaveData>();
+                SaveData data = snapshot.ConvertTo<SaveData>();
                 currentUsername = data.UserName;
 
                 Debug.Log($"Welcome {data.UserName} | PrefabID: {data.PrefabID}, PlaceID: {data.PlaceID}");
                 feedbackText.text = $"Welcome back, {data.UserName}!";
-                currentUsername = enteredUsername;
-                ListenToUserData(currentUsername);
-                feedbackText.text = $"Welcome back, {data.UserName}!";
 
+                ListenToUserData(currentUsername);
             }
             else
             {
                 feedbackText.text = "User not found. Please register first.";
             }
-        });
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Login failed: " + ex.Message);
+            feedbackText.text = "Login error.";
+        }
     }
+
+
 
     private ListenerRegistration currentListener;
 
@@ -198,6 +204,7 @@ public class SaveSystem : MonoBehaviour
             }
         });
     }
+
     private void OnDestroy()
     {
         currentListener?.Stop();
