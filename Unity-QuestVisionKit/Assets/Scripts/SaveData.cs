@@ -12,6 +12,12 @@ public class SaveData
     [FirestoreProperty]
     public string PlaceID { get; set; } = "Couch";
 
+    [FirestoreProperty]
+    public string LastModifiedBy { get; set; } = "";
+
+    [FirestoreProperty]
+    public bool IsModifiedByAnotherUser { get; set; } = false;
+
     public SaveData() { }
 
     public SaveData(string userName, string prefabID = "Cat", string placeID = "Couch")
@@ -19,5 +25,7 @@ public class SaveData
         UserName = userName;
         PrefabID = prefabID;
         PlaceID = placeID;
+        LastModifiedBy = "";
+        IsModifiedByAnotherUser = false;
     }
 }

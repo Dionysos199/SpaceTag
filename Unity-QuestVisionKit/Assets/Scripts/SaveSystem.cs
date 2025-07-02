@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
+using Meta.XR.ImmersiveDebugger.UserInterface.Generic;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -18,7 +19,8 @@ public class SaveSystem : MonoBehaviour
     private List<string> userList = new();
     private string selectedReceiver;
     private string currentUsername;
-
+    [SerializeField] GameObject notificationButton;
+    [SerializeField] TextMeshProUGUI messageReceivedFrom;
     void Awake()
     {
         firestore = FirebaseFirestore.DefaultInstance;
@@ -93,7 +95,14 @@ public class SaveSystem : MonoBehaviour
             return;
         }
 
-        SaveData updatedData = new(selectedReceiver, prefabID, placeID);
+        SaveData updatedData = new SaveData
+        {
+            UserName = selectedReceiver,
+            PrefabID = prefabID,
+            PlaceID = placeID,
+            LastModifiedBy = currentUsername,
+            IsModifiedByAnotherUser = (currentUsername != selectedReceiver)
+        };
 
         try
         {
@@ -107,31 +116,30 @@ public class SaveSystem : MonoBehaviour
     }
 
     // Called by Register Button
-    public void OnRegisterButton()
+    public async void OnRegisterButton()
     {
         string enteredUsername = usernameInput.text.Trim();
-
         if (string.IsNullOrEmpty(enteredUsername))
         {
             feedbackText.text = "Username cannot be empty.";
             return;
         }
 
-        CheckIfUserExists(enteredUsername).ContinueWith(task =>
+        bool exists = await CheckIfUserExists(enteredUsername);
+        if (exists)
         {
-            if (task.Result)
-            {
-                feedbackText.text = "Username already exists.";
-            }
-            else
-            {
-                currentUsername = enteredUsername;
-                SaveData newUser = new(currentUsername);
-                firestore.Document($"save_data/{currentUsername}").SetAsync(newUser);
-                feedbackText.text = "User registered and data saved!";
-            }
-        });
+            feedbackText.text = "Username already exists.";
+        }
+        else
+        {
+            currentUsername = enteredUsername;
+            SaveData newUser = new(currentUsername);
+            await firestore.Document($"save_data/{currentUsername}").SetAsync(newUser);
+            feedbackText.text = "User registered and data saved!";
+            FetchUserList(); // Update dropdown after new user
+        }
     }
+
 
     // Called by Login Button
     public void OnLoginButton()
@@ -179,14 +187,42 @@ public class SaveSystem : MonoBehaviour
             {
                 SaveData data = snapshot.ConvertTo<SaveData>();
                 Debug.Log($"[Realtime Sync] {username} data changed: {data.PrefabID}, {data.PlaceID}");
+                if (data.IsModifiedByAnotherUser)
+                {
+                     messageReceivedFrom.text = ($"You received a message from {data.LastModifiedBy}");
+                }
+                // Show notification UI if modified by another user
+                notificationButton.gameObject.SetActive(data.IsModifiedByAnotherUser);
 
-                // TODO: Update local state or UI here
+                // Update UI or game state with new data here
             }
         });
     }
     private void OnDestroy()
     {
         currentListener?.Stop();
+    }
+    public async void OnNotificationButtonPressed()
+    {
+        if (string.IsNullOrEmpty(currentUsername)) return;
+
+        // Fetch current data first
+        DocumentReference docRef = firestore.Document($"save_data/{currentUsername}");
+        DocumentSnapshot snapshot = await docRef.GetSnapshotAsync();
+
+        if (snapshot.Exists)
+        {
+            SaveData data = snapshot.ConvertTo<SaveData>();
+            data.IsModifiedByAnotherUser = false;
+
+            // Save back updated data
+            await docRef.SetAsync(data);
+
+            notificationButton.gameObject.SetActive(false);
+
+            // Trigger any other logic for user acknowledging the update here
+            feedbackText.text = "Changes acknowledged.";
+        }
     }
 
 
