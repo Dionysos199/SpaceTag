@@ -2,6 +2,8 @@ using Firebase.Firestore;
 using TMPro;
 using UnityEngine;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -11,11 +13,97 @@ public class SaveSystem : MonoBehaviour
     [SerializeField] private TMP_InputField usernameInput;
     [SerializeField] private TextMeshProUGUI feedbackText;
 
+    [SerializeField] private TMP_Dropdown userDropdown;
+
+    private List<string> userList = new();
+    private string selectedReceiver;
     private string currentUsername;
 
     void Awake()
     {
         firestore = FirebaseFirestore.DefaultInstance;
+
+        FetchUserList(); // Populate dropdown on load
+    }
+
+    public void FetchUserList()
+    {
+        firestore.Collection("save_data").GetSnapshotAsync().ContinueWith(task =>
+        {
+            if (task.IsCompletedSuccessfully)
+            {
+                QuerySnapshot snapshot = task.Result;
+                userList.Clear();
+
+                foreach (DocumentSnapshot doc in snapshot.Documents)
+                {
+                    userList.Add(doc.Id); // Use document ID as username
+                }
+
+                PopulateDropdown();
+            }
+            else
+            {
+                feedbackText.text = "Failed to load users.";
+            }
+        });
+    }
+
+    void PopulateDropdown()
+    {
+        userDropdown.ClearOptions();
+        userDropdown.AddOptions(userList);
+        if (userList.Count > 0)
+        {
+            selectedReceiver = userList[0];
+        }
+
+        userDropdown.onValueChanged.AddListener(index =>
+        {
+            selectedReceiver = userList[index];
+            Debug.Log("selected Username "+selectedReceiver);
+        });
+    }
+    public void OnUserNameSelected()
+    {
+        selectedReceiver = userDropdown.options[userDropdown.value].text;
+        Debug.Log("Selected Username: " + selectedReceiver);
+    }
+
+
+    [SerializeField] private TMP_Dropdown prefabID_DD;
+    [SerializeField] private TMP_Dropdown placeID_DD;
+    private string prefabID;
+    private string placeID;
+
+    public async void SendMessage()
+    {
+        if (placeID_DD.options.Count == 0 || prefabID_DD.options.Count == 0)
+        {
+            feedbackText.text = "Dropdowns are not populated.";
+            return;
+        }
+
+        placeID = placeID_DD.options[placeID_DD.value].text;
+        prefabID = prefabID_DD.options[prefabID_DD.value].text;
+
+        if (string.IsNullOrEmpty(selectedReceiver))
+        {
+            feedbackText.text = "No user selected.";
+            return;
+        }
+
+        SaveData updatedData = new(selectedReceiver, prefabID, placeID);
+
+        try
+        {
+            await firestore.Document($"save_data/{selectedReceiver}").SetAsync(updatedData);
+            feedbackText.text = $"Progress saved for {selectedReceiver}!";
+        }
+        catch (System.Exception e)
+        {
+            feedbackText.text = $"Save failed: {e.Message}";
+        }
     }
 
     // Called by Register Button
@@ -65,6 +153,10 @@ public class SaveSystem : MonoBehaviour
 
                 Debug.Log($"Welcome {data.UserName} | PrefabID: {data.PrefabID}, PlaceID: {data.PlaceID}");
                 feedbackText.text = $"Welcome back, {data.UserName}!";
+                currentUsername = enteredUsername;
+                ListenToUserData(currentUsername);
+                feedbackText.text = $"Welcome back, {data.UserName}!";
+
             }
             else
             {
@@ -73,19 +165,30 @@ public class SaveSystem : MonoBehaviour
         });
     }
 
-    // Saves updated prefab/place data
-    public void SaveProgress(string prefabID, string placeID)
-    {
-        if (string.IsNullOrEmpty(currentUsername))
-        {
-            feedbackText.text = "No user logged in.";
-            return;
-        }
+    private ListenerRegistration currentListener;
 
-        SaveData updatedData = new(currentUsername, prefabID, placeID);
-        firestore.Document($"save_data/{currentUsername}").SetAsync(updatedData);
-        feedbackText.text = "Progress saved!";
+    private void ListenToUserData(string username)
+    {
+        // Clean up any previous listener
+        currentListener?.Stop();
+
+        // Start new listener
+        currentListener = firestore.Document($"save_data/{username}").Listen(snapshot =>
+        {
+            if (snapshot.Exists)
+            {
+                SaveData data = snapshot.ConvertTo<SaveData>();
+                Debug.Log($"[Realtime Sync] {username} data changed: {data.PrefabID}, {data.PlaceID}");
+
+                // TODO: Update local state or UI here
+            }
+        });
     }
+    private void OnDestroy()
+    {
+        currentListener?.Stop();
+    }
+
 
     // Check if username already exists
     private async Task<bool> CheckIfUserExists(string username)
