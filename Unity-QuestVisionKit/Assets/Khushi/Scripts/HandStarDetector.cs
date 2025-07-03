@@ -1,30 +1,50 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class HandStarDetector : MonoBehaviour
 {
-    [SerializeField] private GameObject starCanvas;    // UI Canvas to activate
-    [SerializeField] private GameObject starObject;    // Star GameObject to enable and pop
-    [SerializeField] private float popScale = 1.2f;     // How big it scales
-    [SerializeField] private float popDuration = 0.3f;  // Total pop time
-    [SerializeField] private float delayBeforePop = 5f; // Delay in seconds before star appears
+    [SerializeField] private GameObject starCanvasPrefab;
+    [SerializeField] private Transform spawnPoint; // Where to instantiate it
+    [SerializeField] private float popScale = 1.2f;
+    [SerializeField] private float popDuration = 0.3f;
+    [SerializeField] private float delayBeforePop = 5f;
+    [SerializeField] private AudioSource StarAudioSource;
+    
+
+    private GameObject spawnedPrefab;
+    private GameObject starObject;
+    private GameObject starCanvas;
+    private TextMeshProUGUI starText;
     private int starTouchCount = 0;
+
     void Start()
     {
-        // Add Box Collider and set it as trigger
-        BoxCollider boxCollider = GetComponent<BoxCollider>();
-        if (boxCollider == null)
-        {
-            boxCollider = gameObject.AddComponent<BoxCollider>();
-        }
-        boxCollider.isTrigger = true;
+        StartCoroutine(SpawnWithDelay());
+    }
 
-        // Hide star at start
-        if (starObject != null)
+    private IEnumerator SpawnWithDelay()
+    {
+        yield return new WaitForSeconds(delayBeforePop);
+
+        // Instantiate prefab
+        spawnedPrefab = Instantiate(starCanvasPrefab, spawnPoint.position, Quaternion.identity);
+
+        //play sound
+        if (StarAudioSource != null)
         {
-            starObject.SetActive(false);
-            StartCoroutine(DelayedPop());
+            StarAudioSource.Play();
         }
+        
+        // Get references to child objects
+        starObject = spawnedPrefab.transform.Find("StarObject").gameObject;
+        starCanvas = spawnedPrefab.transform.Find("StarCanvas").gameObject;
+        starText = starCanvas.GetComponentInChildren<TextMeshProUGUI>();
+
+        // Set up
+        starCanvas.SetActive(false);
+        starObject.SetActive(true);
+        StartCoroutine(PopEffect(starObject.transform));
     }
 
     private void OnTriggerEnter(Collider other)
@@ -36,6 +56,10 @@ public class HandStarDetector : MonoBehaviour
             if (starTouchCount == 1)
             {
                 starCanvas.SetActive(true);
+                if (starText != null)
+                {
+                    starText.text = "You found a magical star!";
+                }
                 Debug.Log("⭐ First touch – canvas shown");
             }
             else if (starTouchCount == 2)
@@ -48,15 +72,6 @@ public class HandStarDetector : MonoBehaviour
                 Debug.Log("🚫 Star touched again – no action");
             }
         }
-    }
-
-    private IEnumerator DelayedPop()
-    {
-        yield return new WaitForSeconds(delayBeforePop);
-
-        // Show and animate the star
-        starObject.SetActive(true);
-        yield return StartCoroutine(PopEffect(starObject.transform));
     }
 
     private IEnumerator PopEffect(Transform target)
