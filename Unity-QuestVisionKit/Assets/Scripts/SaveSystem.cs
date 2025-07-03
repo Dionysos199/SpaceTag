@@ -209,6 +209,7 @@ public class SaveSystem : MonoBehaviour
     {
         currentListener?.Stop();
     }
+    [SerializeField]    SpawnDynamically spawnDynamically;
     public async void OnNotificationButtonPressed()
     {
         if (string.IsNullOrEmpty(currentUsername)) return;
@@ -226,7 +227,7 @@ public class SaveSystem : MonoBehaviour
             await docRef.SetAsync(data);
 
             notificationButton.gameObject.SetActive(false);
-
+            spawnDynamically.OnPrefabIDUpdated(data.PrefabID, data.PlaceID);
             // Trigger any other logic for user acknowledging the update here
             feedbackText.text = "Changes acknowledged.";
         }
