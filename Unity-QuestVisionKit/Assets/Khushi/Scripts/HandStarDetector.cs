@@ -17,7 +17,7 @@ public class HandStarDetector : MonoBehaviour
     private GameObject starCanvas;
     private TextMeshProUGUI starText;
     private int starTouchCount = 0;
-
+    private float typingSpeed = 0.05f; // seconds between each character
     void Start()
     {
         StartCoroutine(SpawnWithDelay());
@@ -58,7 +58,7 @@ public class HandStarDetector : MonoBehaviour
                 starCanvas.SetActive(true);
                 if (starText != null)
                 {
-                    starText.text = "You found a magical star!";
+                    StartCoroutine(TypeTextEffect("One day at a time. I’m proud of you. Rest now ...Good Night!"));
                 }
                 Debug.Log("⭐ First touch – canvas shown");
             }
@@ -74,6 +74,15 @@ public class HandStarDetector : MonoBehaviour
         }
     }
 
+    private IEnumerator TypeTextEffect(string fullText)
+    {
+        starText.text = "";
+        foreach (char c in fullText)
+        {
+            starText.text += c;
+            yield return new WaitForSeconds(typingSpeed);
+        }
+    } 
     private IEnumerator PopEffect(Transform target)
     {
         Vector3 originalScale = target.localScale;

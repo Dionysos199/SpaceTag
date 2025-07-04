@@ -41,7 +41,7 @@ public class CeilingQuadSpawner : MonoBehaviour
                 }
 
                 // Handle Table
-                if ((anchor.Label & MRUKAnchor.SceneLabels.TABLE) != 0)
+                if ((anchor.Label & MRUKAnchor.SceneLabels.STORAGE) != 0)
                 {
                     SpawnJarOnTable(anchor);
                 }
@@ -101,7 +101,9 @@ public class CeilingQuadSpawner : MonoBehaviour
         Vector3 worldCenter = anchor.transform.TransformPoint(bounds.center);
 
         // Move up slightly from the anchor surface
-        float liftAbove = bounds.extents.y + offsetAboveTable;
+        float extraLift = 0.05f; // or 0.1f for more noticeable effect
+        float liftAbove = bounds.extents.y + offsetAboveTable + extraLift;
+      //  float liftAbove = bounds.extents.y + offsetAboveTable;
 
         // Push slightly in front
         float pushForward = 0.1f;
