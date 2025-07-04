@@ -5,22 +5,28 @@ using UnityEngine;
 public class BirdFlyInRoom : MonoBehaviour
 {
     
-   public float speed = 1.5f;
+    public float speed = 1.5f;
     public float changeDirectionTime = 3f;
     private float timer;
+
     [SerializeField] Transform leftPalm;
     [SerializeField] Transform rightPalm;
 
     public float handTogetherThreshold = 0.1f;
     public float landingSmoothTime = 1f;
-    private bool isTakingOff = false;
+
     private bool birdIsLanding = false;
+    private bool isTakingOff = false;
+
     private Vector3 landingVelocity;
     private Vector3 targetPosition;
     private Bounds roomBounds;
 
+    private Animator animator;
+
     void Start()
     {
+        animator = GetComponent<Animator>();
         MRUK.Instance.RegisterSceneLoadedCallback(OnMRUKReady);
     }
 
@@ -33,99 +39,54 @@ public class BirdFlyInRoom : MonoBehaviour
             return;
         }
 
-        // Add colliders to MRUK anchors if missing
         foreach (var anchor in room.Anchors)
         {
             if (anchor.GetComponent<Collider>() == null)
             {
                 var meshFilter = anchor.GetComponent<MeshFilter>();
                 if (meshFilter != null)
-                {
                     anchor.gameObject.AddComponent<MeshCollider>();
-                }
                 else
-                {
                     anchor.gameObject.AddComponent<BoxCollider>();
-                }
             }
         }
 
         roomBounds = CalculateRoomBounds(room);
-        Debug.Log($"📦 Room bounds calculated: center={roomBounds.center}, size={roomBounds.size}");
-        // Move bird to a better-looking initial position (e.g., center of the room, a bit above ground)
         Vector3 startPos = roomBounds.center;
         startPos.y = Mathf.Clamp(startPos.y + 1.5f, roomBounds.min.y + 1.5f, roomBounds.max.y - 0.5f);
         transform.position = startPos;
 
-// Look in a neutral direction (e.g., forward or random flat direction)
-        Vector3 lookDirection = Vector3.forward;
-        lookDirection = Quaternion.Euler(0, Random.Range(0f, 360f), 0) * lookDirection; // random flat look
+        Vector3 lookDirection = Quaternion.Euler(0, Random.Range(0f, 360f), 0) * Vector3.forward;
         transform.rotation = Quaternion.LookRotation(lookDirection, Vector3.up);
-        
+
         PickNewTarget();
     }
 
     void Update()
     {
         if (roomBounds.size == Vector3.zero) return;
+
+        bool handsClose = false;
+
         if (leftPalm != null && rightPalm != null)
         {
             float handsDistance = Vector3.Distance(leftPalm.position, rightPalm.position);
+            handsClose = handsDistance < handTogetherThreshold;
 
-            if (handsDistance < handTogetherThreshold)
+            if (handsClose)
             {
                 Vector3 midPoint = (leftPalm.position + rightPalm.position) / 2f;
                 LandOnHands(midPoint);
-                return; // ⛔ Skip flying logic when bird is landing
+                return; // skip flying logic
             }
-           /* else if (birdIsLanding)
+
+            if (birdIsLanding)
             {
-                birdIsLanding = false; // Resume flying next frame
-                PickNewTarget();       // Pick new flight target
-            }*/
-           else if (birdIsLanding)
-           {
-               birdIsLanding = false;
-               StartCoroutine(SmoothTakeoff());
-           }
-        } 
-        void LandOnHands(Vector3 targetPosition)
-{
-    if (!birdIsLanding)
-    {
-        birdIsLanding = true;
-        // Optional: play chirp, animation etc.
-    }
+                birdIsLanding = false;
+                StartCoroutine(SmoothTakeoff());
+            }
+        }
 
-    transform.position = Vector3.SmoothDamp(
-        transform.position,
-        targetPosition,
-        ref landingVelocity,
-        landingSmoothTime
-    );
-
-   /* // Look in flat forward direction between hands
-    Vector3 flatForward = (rightPalm.position - leftPalm.position).normalized;
-    flatForward.y = 0;
-
-    if (flatForward.sqrMagnitude > 0.001f)
-    {
-        Quaternion lookRot = Quaternion.LookRotation(flatForward, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 2f);
-    }
-    */
-   
-   // New logic — bird faces the user (camera), but stays level
-   Vector3 toCamera = Camera.main.transform.position - transform.position;
-   toCamera.y = 0; // flatten to horizontal
-
-   if (toCamera.sqrMagnitude > 0.001f)
-   {
-       Quaternion lookRot = Quaternion.LookRotation(toCamera.normalized, Vector3.up);
-       transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 2f);
-   }
-    
-}
         if (!isTakingOff)
         {
             timer += Time.deltaTime;
@@ -140,14 +101,59 @@ public class BirdFlyInRoom : MonoBehaviour
 
             Quaternion lookRot = Quaternion.LookRotation(targetPosition - transform.position);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 2f);
+
+            if (animator != null)
+            {
+                animator.SetBool("IsFlying", true);
+                animator.SetBool("IsLanding", false);
+            }
         }
     }
-    
+
+    void LandOnHands(Vector3 target)
+    {
+        float distanceToPalm = Vector3.Distance(transform.position, target);
+
+        // Move bird smoothly toward the hand midpoint
+        transform.position = Vector3.SmoothDamp(transform.position, target, ref landingVelocity, landingSmoothTime);
+
+        // Rotate to face user
+        Vector3 toCamera = Camera.main.transform.position - transform.position;
+        toCamera.y = 0;
+        if (toCamera.sqrMagnitude > 0.001f)
+        {
+            Quaternion lookRot = Quaternion.LookRotation(toCamera.normalized, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 2f);
+        }
+
+        // ✅ Only when bird is VERY close to hand, play landing animation
+        if (!birdIsLanding && distanceToPalm < 0.05f)
+        {
+            birdIsLanding = true;
+
+            if (animator != null)
+            {
+                animator.SetBool("IsFlying", false);
+                animator.SetBool("IsLanding", true); // ✅ TRIGGER LANDING ANIMATION
+            }
+
+            Debug.Log("✅ Bird has landed!");
+        }
+    }
+
     IEnumerator SmoothTakeoff()
     {
         isTakingOff = true;
 
-        Vector3 takeoffTarget = transform.position + new Vector3(0, 0.5f, 0);
+        // ✅ Trigger flying animation FIRST
+        if (animator != null)
+        {
+            animator.SetBool("IsLanding", false);
+            animator.SetBool("IsFlying", true);
+        }
+
+        // Smooth vertical takeoff
+        Vector3 takeoffTarget = transform.position + Vector3.up * 0.5f;
         float duration = 0.5f;
         float elapsed = 0f;
 
@@ -158,59 +164,14 @@ public class BirdFlyInRoom : MonoBehaviour
             yield return null;
         }
 
-        PickNewTarget(); // ✅ Get next target *before* rotating
-        yield return RotateSmoothlyToTarget(); // ✅ Smoothly rotate to that target
-
         isTakingOff = false;
+        PickNewTarget(); // Continue flying
     }
-    
-    IEnumerator RotateSmoothlyToTarget()
-    {
-        Quaternion startRotation = transform.rotation;
-        Quaternion endRotation = Quaternion.LookRotation(targetPosition - transform.position, Vector3.up);
 
-        float rotateDuration = 0.4f;
-        float rotateElapsed = 0f;
-
-        while (rotateElapsed < rotateDuration)
-        {
-            transform.rotation = Quaternion.Slerp(startRotation, endRotation, rotateElapsed / rotateDuration);
-            rotateElapsed += Time.deltaTime;
-            yield return null;
-        }
-
-        transform.rotation = endRotation;
-    }
-    
-    void LandOnHands(Vector3 targetPosition)
-    {
-        if (!birdIsLanding)
-        {
-            birdIsLanding = true;
-            // Optional: play chirp, animation etc.
-        }
-
-        transform.position = Vector3.SmoothDamp(
-            transform.position,
-            targetPosition,
-            ref landingVelocity,
-            landingSmoothTime
-        );
-
-        // Look in flat forward direction between hands
-        Vector3 flatForward = (rightPalm.position - leftPalm.position).normalized;
-        flatForward.y = 0;
-
-        if (flatForward.sqrMagnitude > 0.001f)
-        {
-            Quaternion lookRot = Quaternion.LookRotation(flatForward, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Time.deltaTime * 2f);
-        }
-    }
     void PickNewTarget()
     {
         float padding = 0.3f;
-        float minDistance = 1.0f; // ✅ Adjust this as needed (e.g. 1 meter minimum flight)
+        float minDistance = 1.0f;
 
         Vector3 min = roomBounds.min + Vector3.one * padding;
         Vector3 max = roomBounds.max - Vector3.one * padding;
@@ -218,8 +179,7 @@ public class BirdFlyInRoom : MonoBehaviour
         float yMin = Mathf.Clamp(min.y + 1.5f, min.y, max.y - padding);
         float yMax = Mathf.Clamp(max.y - 0.5f, yMin, max.y);
 
-        int maxAttempts = 10;
-        for (int i = 0; i < maxAttempts; i++)
+        for (int i = 0; i < 10; i++)
         {
             Vector3 candidate = new Vector3(
                 Random.Range(min.x, max.x),
@@ -230,10 +190,8 @@ public class BirdFlyInRoom : MonoBehaviour
             Vector3 direction = candidate - transform.position;
             float distance = direction.magnitude;
 
-            if (distance < minDistance)
-                continue; // 🔁 Skip if too close
+            if (distance < minDistance) continue;
 
-            // Use SphereCast for obstacle detection
             if (!Physics.SphereCast(transform.position, 0.2f, direction.normalized, out RaycastHit hit, distance - 0.2f))
             {
                 targetPosition = candidate;
@@ -241,7 +199,6 @@ public class BirdFlyInRoom : MonoBehaviour
             }
         }
 
-        // If all attempts fail, stay at current position
         targetPosition = transform.position;
     }
 
