@@ -849,7 +849,7 @@ PlayerSettings:
     PS5: 
     QNX: 
     ReservedCFE: 
-    Standalone: ISDK_OPENXR_HAND
+    Standalone: ISDK_OPENXR_HAND;DREAMTECK_SPLINES
     VisionOS: 
     Windows Store Apps: 
     XboxOne: 
