@@ -3,395 +3,310 @@ using UnityEngine;
 
 public class FlowerSpawning : MonoBehaviour
 {
+    [Header("Prefabs")]
     [SerializeField] private GameObject flowerPrefab;
-    [SerializeField] private GameObject grassPrefab;
+    
+    [Header("Spawn Settings")]
+    [SerializeField] private Transform originPoint; // Reference to spawn point
+    
+    [Header("Text Settings")]
+    [SerializeField] private string textToSpell = "HELLO WORLD";
     [SerializeField] private float letterWidth = 3f;
     [SerializeField] private float letterHeight = 4f;
-    [SerializeField] private float flowerDensity = 0.3f;
     [SerializeField] private float letterSpacing = 1f;
-    [SerializeField] private float lineSpacing = 6f;
-    [SerializeField] private int flowersPerPoint = 4;
-    [SerializeField] private float flowerScatter = 0f;
-    [SerializeField] private string textToSpell = "HELLO\nWORLD";
-
+    
+    [Header("Flower Settings")]
+    [SerializeField] private float flowerDensity = 0.5f;
+    [SerializeField] private int flowersPerPoint = 2;
+    [SerializeField] private float flowerScatter = 0.1f;
+    
+    [Header("Scale Settings")]
+    [SerializeField] private float globalScale = 0.1f; // Scale everything down more for table size
+    [SerializeField] private bool useRandomScale = true;
+    [SerializeField] private Vector2 scaleRange = new Vector2(0.8f, 1.2f);
+    
+    [Header("Density Settings")]
+    [SerializeField] private float densityMultiplier = 2f; // Increase flower density independently
+    
     void Start()
     {
-        SpellWithFlowers(textToSpell);
+        GenerateFlowerText();
     }
-
-    public void SpellWithFlowers(string text) 
+    
+    [ContextMenu("Generate Flower Text")]
+    public void GenerateFlowerText()
     {
-        string[] lines = text.Split('\n');
+        // Use origin point if assigned, otherwise use this transform
+        Vector3 startPosition = originPoint != null ? originPoint.position : transform.position;
         
-        for (int lineIndex = 0; lineIndex < lines.Length; lineIndex++)
+        float currentX = 0f;
+        
+        foreach (char c in textToSpell)
         {
-            string line = lines[lineIndex];
-            float currentX = 0f;
-            float currentZ = -lineIndex * lineSpacing;
-            
-            foreach (char c in line) 
+            if (c == ' ')
             {
-                if (c == ' ') 
+                currentX += letterWidth * globalScale * 0.6f; // Apply global scale to spacing
+                continue;
+            }
+            
+            GenerateFlowersForLetter(c, startPosition + new Vector3(currentX * globalScale, 0, 0)); // Use origin position
+            currentX += letterWidth + letterSpacing;
+        }
+    }
+    
+    void GenerateFlowersForLetter(char letter, Vector3 basePosition)
+    {
+        List<Vector2> points = GetSimpleLetterPoints(letter);
+        
+        foreach (Vector2 point in points)
+        {
+            Vector3 worldPos = basePosition + new Vector3(point.x * globalScale, 0, point.y * globalScale);
+            
+            // Use density multiplier to add more flowers per point
+            int totalFlowers = Mathf.RoundToInt(flowersPerPoint * densityMultiplier);
+            
+            for (int i = 0; i < totalFlowers; i++)
+            {
+                Vector3 flowerPos = worldPos;
+                if (i > 0)
                 {
-                    currentX += letterWidth * 0.6f;
-                    continue;
+                    // Scale scatter based on global scale but allow more spread for density
+                    float scatterAmount = flowerScatter * globalScale * densityMultiplier * 0.5f;
+                    flowerPos += new Vector3(
+                        Random.Range(-scatterAmount, scatterAmount),
+                        0,
+                        Random.Range(-scatterAmount, scatterAmount)
+                    );
                 }
                 
-                SpawnFlowersForLetter(c, new Vector3(currentX, 0, currentZ));
-                currentX += letterWidth + letterSpacing;
+                GameObject flower = Instantiate(flowerPrefab, flowerPos, Quaternion.Euler(0, Random.Range(0, 360), 0));
+                
+                // Apply proper scaling
+                if (useRandomScale)
+                {
+                    float randomScale = Random.Range(scaleRange.x, scaleRange.y);
+                    flower.transform.localScale = flowerPrefab.transform.localScale * globalScale * randomScale;
+                }
+                else
+                {
+                    flower.transform.localScale = flowerPrefab.transform.localScale * globalScale;
+                }
             }
         }
     }
     
-    void SpawnFlowersForLetter(char letter, Vector3 basePosition) 
-    {
-        List<Vector2> letterPoints = GetLetterPoints(letter);
-        
-        foreach (Vector2 point in letterPoints) 
-        {
-            Vector3 worldPos = basePosition + new Vector3(point.x, 0, point.y);
-            
-            if (grassPrefab != null)
-            {
-                Quaternion grassRotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
-                Instantiate(grassPrefab, worldPos, grassRotation);
-            }
-            
-            for (int i = 0; i < flowersPerPoint; i++) 
-            {
-                Vector3 scatteredPos = worldPos;
-                
-                if (i > 0) 
-                {
-                    scatteredPos += new Vector3(
-                        Random.Range(-flowerScatter, flowerScatter), 
-                        0, 
-                        Random.Range(-flowerScatter, flowerScatter)
-                    );
-                }
-                
-                Quaternion rotation = Quaternion.Euler(0, Random.Range(0, 360), 0);
-                Instantiate(flowerPrefab, scatteredPos, rotation);
-            }
-        }
-    }
-
-    List<Vector2> GetLetterPoints(char letter) 
+    // Simplified letter shapes for better performance
+    List<Vector2> GetSimpleLetterPoints(char letter)
     {
         List<Vector2> points = new List<Vector2>();
         
-        switch (letter.ToString().ToUpper()) 
+        switch (letter.ToString().ToUpper())
         {
             case "A":
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.1f + letterWidth * 0.4f * t, letterHeight * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.9f - letterWidth * 0.4f * t, letterHeight * t));
-                for (float x = letterWidth * 0.3f; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.4f));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.5f, letterHeight));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth * 0.5f, letterHeight));
+                AddLine(points, new Vector2(letterWidth * 0.25f, letterHeight * 0.4f), new Vector2(letterWidth * 0.75f, letterHeight * 0.4f));
                 break;
-
+                
             case "B":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth * 0.6f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
-                for (float angle = -90; angle <= 90; angle += 180 * flowerDensity / (Mathf.PI * letterWidth * 0.2f)) 
-                {
-                    float x = letterWidth * 0.6f + letterWidth * 0.2f * Mathf.Cos(angle * Mathf.Deg2Rad);
-                    float y = letterHeight * 0.75f + letterHeight * 0.25f * Mathf.Sin(angle * Mathf.Deg2Rad);
-                    points.Add(new Vector2(x, y));
-                }
-                for (float angle = -90; angle <= 90; angle += 180 * flowerDensity / (Mathf.PI * letterWidth * 0.2f)) 
-                {
-                    float x = letterWidth * 0.7f + letterWidth * 0.2f * Mathf.Cos(angle * Mathf.Deg2Rad);
-                    float y = letterHeight * 0.25f + letterHeight * 0.25f * Mathf.Sin(angle * Mathf.Deg2Rad);
-                    points.Add(new Vector2(x, y));
-                }
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.7f, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth * 0.6f, letterHeight * 0.5f));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.7f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.7f, letterHeight), new Vector2(letterWidth * 0.7f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.6f, letterHeight * 0.5f), new Vector2(letterWidth * 0.7f, 0));
                 break;
-
+                
             case "C":
-                for (float y = 0.2f; y <= letterHeight - 0.2f; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth * 0.9f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.9f; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
+                AddLine(points, new Vector2(0, letterHeight * 0.2f), new Vector2(0, letterHeight * 0.8f));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.8f, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.8f, 0));
                 break;
-
+                
             case "D":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth * 0.6f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.6f; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.6f + letterWidth * 0.3f * Mathf.Sin(y / letterHeight * Mathf.PI), y));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.6f, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.6f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.6f, letterHeight), new Vector2(letterWidth, letterHeight * 0.7f));
+                AddLine(points, new Vector2(letterWidth, letterHeight * 0.7f), new Vector2(letterWidth, letterHeight * 0.3f));
+                AddLine(points, new Vector2(letterWidth, letterHeight * 0.3f), new Vector2(letterWidth * 0.6f, 0));
                 break;
-
+                
             case "E":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth * 0.8f, letterHeight * 0.5f));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, 0));
                 break;
-
+                
             case "F":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth * 0.8f, letterHeight * 0.5f));
                 break;
-
+                
             case "G":
-                for (float y = letterHeight * 0.15f; y <= letterHeight * 0.85f; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
-                for (float y = 0; y <= letterHeight * 0.5f; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.8f, y));
-                for (float x = letterWidth * 0.5f; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
+                AddLine(points, new Vector2(0, letterHeight * 0.2f), new Vector2(0, letterHeight * 0.8f));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.8f, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.8f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.8f, 0), new Vector2(letterWidth * 0.8f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.5f, letterHeight * 0.5f), new Vector2(letterWidth * 0.8f, letterHeight * 0.5f));
                 break;
-
+                
             case "H":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth, y));
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth, letterHeight * 0.5f));
                 break;
-
+                
             case "I":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.5f, y));
-                for (float x = letterWidth * 0.2f; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = letterWidth * 0.2f; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
+                AddLine(points, new Vector2(letterWidth * 0.5f, 0), new Vector2(letterWidth * 0.5f, letterHeight));
+                AddLine(points, new Vector2(letterWidth * 0.2f, 0), new Vector2(letterWidth * 0.8f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.2f, letterHeight), new Vector2(letterWidth * 0.8f, letterHeight));
                 break;
-
+                
             case "J":
-                for (float y = letterHeight * 0.3f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.7f, y));
-                for (float x = letterWidth * 0.3f; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.3f));
-                for (float y = 0; y <= letterHeight * 0.3f; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
+                AddLine(points, new Vector2(letterWidth * 0.7f, letterHeight * 0.3f), new Vector2(letterWidth * 0.7f, letterHeight));
+                AddLine(points, new Vector2(letterWidth * 0.3f, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.7f, letterHeight * 0.3f));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight * 0.3f));
                 break;
-
+                
             case "K":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.5f * t, letterHeight * 0.5f + letterHeight * 0.5f * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.5f * t, letterHeight * 0.5f - letterHeight * 0.5f * t));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth, 0));
                 break;
-
+                
             case "L":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, 0));
                 break;
-
+                
             case "M":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth, y));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.5f * t, letterHeight - letterHeight * 0.6f * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth - letterWidth * 0.5f * t, letterHeight - letterHeight * 0.6f * t));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.5f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth, letterHeight), new Vector2(letterWidth * 0.5f, letterHeight * 0.5f));
                 break;
-
+                
             case "N":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth, y));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * t, letterHeight - letterHeight * t));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, 0));
                 break;
-
+                
             case "O":
-                for (float angle = 0; angle < 360; angle += 360 * flowerDensity / (2 * Mathf.PI * letterWidth * 0.48f)) 
-                {
-                    float x = letterWidth * 0.5f + letterWidth * 0.48f * Mathf.Cos(angle * Mathf.Deg2Rad);
-                    float y = letterHeight * 0.5f + letterHeight * 0.48f * Mathf.Sin(angle * Mathf.Deg2Rad);
-                    points.Add(new Vector2(x, y));
-                }
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, 0));
                 break;
-
+                
             case "P":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
-                for (float y = letterHeight * 0.5f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.7f, y));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.7f, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth * 0.7f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.7f, letterHeight), new Vector2(letterWidth * 0.7f, letterHeight * 0.5f));
                 break;
-
+                
             case "Q":
-                for (float angle = 0; angle < 360; angle += 360 * flowerDensity / (2 * Mathf.PI * letterWidth * 0.4f)) 
-                {
-                    float x = letterWidth * 0.5f + letterWidth * 0.4f * Mathf.Cos(angle * Mathf.Deg2Rad);
-                    float y = letterHeight * 0.5f + letterHeight * 0.4f * Mathf.Sin(angle * Mathf.Deg2Rad);
-                    points.Add(new Vector2(x, y));
-                }
-                for (float t = 0; t <= 1; t += flowerDensity / letterWidth) 
-                    points.Add(new Vector2(letterWidth * 0.6f + letterWidth * 0.3f * t, letterHeight * 0.3f - letterHeight * 0.3f * t));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, 0));
+                AddLine(points, new Vector2(letterWidth * 0.6f, letterHeight * 0.3f), new Vector2(letterWidth, 0));
                 break;
-
+                
             case "R":
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float x = 0; x <= letterWidth * 0.7f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
-                for (float y = letterHeight * 0.5f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.7f, y));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.4f + letterWidth * 0.4f * t, letterHeight * 0.5f - letterHeight * 0.5f * t));
+                AddLine(points, Vector2.zero, new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.7f, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight * 0.5f), new Vector2(letterWidth * 0.7f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.7f, letterHeight), new Vector2(letterWidth * 0.7f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.4f, letterHeight * 0.5f), new Vector2(letterWidth, 0));
                 break;
-
+                
             case "S":
-                for (float x = letterWidth * 0.2f; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float y = letterHeight * 0.5f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.2f, y));
-                for (float x = letterWidth * 0.2f; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight * 0.5f));
-                for (float y = 0; y <= letterHeight * 0.5f; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.8f, y));
-                for (float x = letterWidth * 0.2f; x <= letterWidth * 0.8f; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
+                AddLine(points, new Vector2(letterWidth * 0.2f, letterHeight), new Vector2(letterWidth * 0.8f, letterHeight));
+                AddLine(points, new Vector2(letterWidth * 0.2f, letterHeight), new Vector2(letterWidth * 0.2f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.2f, letterHeight * 0.5f), new Vector2(letterWidth * 0.8f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.8f, letterHeight * 0.5f), new Vector2(letterWidth * 0.8f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.2f, 0), new Vector2(letterWidth * 0.8f, 0));
                 break;
-
+                
             case "T":
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.5f, y));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(letterWidth * 0.5f, 0), new Vector2(letterWidth * 0.5f, letterHeight));
                 break;
-
+                
             case "U":
-                for (float y = letterHeight * 0.3f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.1f, y));
-                for (float y = letterHeight * 0.3f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.9f, y));
-                for (float angle = 0; angle <= 180; angle += 180 * flowerDensity / (Mathf.PI * letterWidth * 0.4f)) 
-                {
-                    float x = letterWidth * 0.5f + letterWidth * 0.4f * Mathf.Cos(angle * Mathf.Deg2Rad);
-                    float y = letterHeight * 0.15f + letterHeight * 0.15f * Mathf.Sin(angle * Mathf.Deg2Rad);
-                    points.Add(new Vector2(x, y));
-                }
+                AddLine(points, new Vector2(0, letterHeight * 0.3f), new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(letterWidth, letterHeight * 0.3f), new Vector2(letterWidth, letterHeight));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.2f, letterHeight * 0.3f));
+                AddLine(points, new Vector2(letterWidth * 0.2f, letterHeight * 0.3f), new Vector2(letterWidth * 0.8f, letterHeight * 0.3f));
+                AddLine(points, new Vector2(letterWidth * 0.8f, letterHeight * 0.3f), new Vector2(letterWidth, 0));
                 break;
-
+                
             case "V":
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.5f * t, letterHeight - letterHeight * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth - letterWidth * 0.5f * t, letterHeight - letterHeight * t));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.5f, 0));
+                AddLine(points, new Vector2(letterWidth, letterHeight), new Vector2(letterWidth * 0.5f, 0));
                 break;
-
+                
             case "W":
-                for (float y = letterHeight * 0.3f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(0, y));
-                for (float y = letterHeight * 0.3f; y <= letterHeight; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth, y));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.25f * (1 + t), letterHeight * 0.3f + letterHeight * 0.4f * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.75f * (1 + (1-t)/3), letterHeight * 0.3f + letterHeight * 0.4f * t));
-                points.Add(new Vector2(letterWidth * 0.25f, 0));
-                points.Add(new Vector2(letterWidth * 0.75f, 0));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.25f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.25f, 0), new Vector2(letterWidth * 0.5f, letterHeight * 0.6f));
+                AddLine(points, new Vector2(letterWidth * 0.5f, letterHeight * 0.6f), new Vector2(letterWidth * 0.75f, 0));
+                AddLine(points, new Vector2(letterWidth * 0.75f, 0), new Vector2(letterWidth, letterHeight));
                 break;
-
+                
             case "X":
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * t, letterHeight - letterHeight * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth - letterWidth * t, letterHeight - letterHeight * t));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, 0));
                 break;
-
+                
             case "Y":
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth * 0.5f * t, letterHeight - letterHeight * 0.5f * t));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth - letterWidth * 0.5f * t, letterHeight - letterHeight * 0.5f * t));
-                for (float y = 0; y <= letterHeight * 0.5f; y += flowerDensity) 
-                    points.Add(new Vector2(letterWidth * 0.5f, y));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.5f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth, letterHeight), new Vector2(letterWidth * 0.5f, letterHeight * 0.5f));
+                AddLine(points, new Vector2(letterWidth * 0.5f, letterHeight * 0.5f), new Vector2(letterWidth * 0.5f, 0));
                 break;
-
+                
             case "Z":
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, letterHeight));
-                for (float t = 0; t <= 1; t += flowerDensity / letterHeight) 
-                    points.Add(new Vector2(letterWidth - letterWidth * t, letterHeight - letterHeight * t));
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                    points.Add(new Vector2(x, 0));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, 0));
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, 0));
                 break;
-
+                
             case "!":
-                for (float y = letterHeight * 0.4f; y <= letterHeight; y += flowerDensity) 
-                {
-                    points.Add(new Vector2(letterWidth * 0.45f, y));
-                    points.Add(new Vector2(letterWidth * 0.5f, y));
-                    points.Add(new Vector2(letterWidth * 0.55f, y));
-                }
-                for (float x = letterWidth * 0.45f; x <= letterWidth * 0.55f; x += flowerDensity) 
-                {
-                    points.Add(new Vector2(x, letterHeight));
-                    points.Add(new Vector2(x, letterHeight * 0.4f));
-                }
-                for (float x = letterWidth * 0.45f; x <= letterWidth * 0.55f; x += flowerDensity) 
-                {
-                    points.Add(new Vector2(x, letterHeight * 0.2f));
-                    points.Add(new Vector2(x, letterHeight * 0.1f));
-                }
-                for (float y = letterHeight * 0.1f; y <= letterHeight * 0.2f; y += flowerDensity) 
-                {
-                    points.Add(new Vector2(letterWidth * 0.45f, y));
-                    points.Add(new Vector2(letterWidth * 0.55f, y));
-                }
+                AddLine(points, new Vector2(letterWidth * 0.5f, letterHeight * 0.3f), new Vector2(letterWidth * 0.5f, letterHeight));
+                points.Add(new Vector2(letterWidth * 0.5f, letterHeight * 0.1f));
+                points.Add(new Vector2(letterWidth * 0.45f, letterHeight * 0.15f));
+                points.Add(new Vector2(letterWidth * 0.55f, letterHeight * 0.15f));
+                points.Add(new Vector2(letterWidth * 0.45f, letterHeight * 0.05f));
+                points.Add(new Vector2(letterWidth * 0.55f, letterHeight * 0.05f));
                 break;
-
+                
             default:
-                for (float x = 0; x <= letterWidth; x += flowerDensity) 
-                {
-                    points.Add(new Vector2(x, 0));
-                    points.Add(new Vector2(x, letterHeight));
-                }
-                for (float y = 0; y <= letterHeight; y += flowerDensity) 
-                {
-                    points.Add(new Vector2(0, y));
-                    points.Add(new Vector2(letterWidth, y));
-                }
+                // Simple rectangle for unknown characters
+                AddLine(points, Vector2.zero, new Vector2(letterWidth, 0));
+                AddLine(points, new Vector2(letterWidth, 0), new Vector2(letterWidth, letterHeight));
+                AddLine(points, new Vector2(letterWidth, letterHeight), new Vector2(0, letterHeight));
+                AddLine(points, new Vector2(0, letterHeight), Vector2.zero);
                 break;
         }
         
         return points;
+    }
+    
+    void AddLine(List<Vector2> points, Vector2 start, Vector2 end)
+    {
+        float distance = Vector2.Distance(start, end);
+        int stepCount = Mathf.Max(1, Mathf.RoundToInt(distance / flowerDensity));
+        
+        for (int i = 0; i <= stepCount; i++)
+        {
+            float t = (float)i / stepCount;
+            Vector2 point = Vector2.Lerp(start, end, t);
+            points.Add(point);
+        }
     }
 }
