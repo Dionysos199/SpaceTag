@@ -1,5 +1,6 @@
 using System.Collections;
 using Meta.XR.MRUtilityKit;
+using TMPro;
 using UnityEngine;
 
 public class BirdFlyInRoom : MonoBehaviour
@@ -23,10 +24,22 @@ public class BirdFlyInRoom : MonoBehaviour
     private Bounds roomBounds;
 
     private Animator animator;
-
+    private Canvas birdCanvas;
+    private TextMeshProUGUI messageText;
     void Start()
     {
         animator = GetComponent<Animator>();
+        birdCanvas = GetComponentInChildren<Canvas>(true); // true allows finding disabled canvas
+       /* if (birdCanvas != null)
+            birdCanvas.enabled = false; // make sure it starts hidden */
+        if (birdCanvas != null)
+        {
+            birdCanvas.gameObject.SetActive(false); // ✅ This enables the object
+            messageText = birdCanvas.GetComponentInChildren<TextMeshProUGUI>(true);
+           // birdCanvas.enabled = true; // no delay
+            Debug.Log("🎯 Canvas enabled immediately");
+        } 
+        
         MRUK.Instance.RegisterSceneLoadedCallback(OnMRUKReady);
     }
 
@@ -83,6 +96,13 @@ public class BirdFlyInRoom : MonoBehaviour
             if (birdIsLanding)
             {
                 birdIsLanding = false;
+                // 🔴 Disable canvas immediately on takeoff
+                if (birdCanvas != null)
+                {
+                    birdCanvas.gameObject.SetActive(false);
+                    Debug.Log("🔴 Canvas hidden on takeoff");
+                } 
+                
                 StartCoroutine(SmoothTakeoff());
             }
         }
@@ -138,9 +158,25 @@ public class BirdFlyInRoom : MonoBehaviour
             }
 
             Debug.Log("✅ Bird has landed!");
+            
+            // ⏱️ Start delayed canvas enable
+            if (birdCanvas != null)
+            {
+                StartCoroutine(EnableCanvasAfterDelay(1f));
+            }
         }
     }
 
+    IEnumerator EnableCanvasAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        if (birdCanvas != null && messageText != null)
+        {
+            birdCanvas.gameObject.SetActive(true);
+            StartCoroutine(TypeMessage("You are the best mom!  Thank you for always loving and taking care of me."));
+        }
+    } 
+    
     IEnumerator SmoothTakeoff()
     {
         isTakingOff = true;
@@ -226,5 +262,15 @@ public class BirdFlyInRoom : MonoBehaviour
             Mathf.Clamp(position.y, min.y + 1.5f, max.y - 0.5f),
             Mathf.Clamp(position.z, min.z, max.z)
         );
+    }
+    
+    IEnumerator TypeMessage(string fullMessage, float delay = 0.05f)
+    {
+        messageText.text = "";
+        foreach (char c in fullMessage)
+        {
+            messageText.text += c;
+            yield return new WaitForSeconds(delay);
+        }
     }
 }
