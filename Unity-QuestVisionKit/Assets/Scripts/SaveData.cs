@@ -18,6 +18,12 @@ public class SaveData
     [FirestoreProperty]
     public bool IsModifiedByAnotherUser { get; set; } = false;
 
+    [FirestoreProperty]
+    public bool personalizedMessage { get; set; } = false;
+
+    [FirestoreProperty]
+    public bool AIPrompt { get; set; } = false;
+
     public SaveData() { }
 
     public SaveData(string userName, string prefabID = "Cat", string placeID = "Couch")
