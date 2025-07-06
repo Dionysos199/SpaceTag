@@ -14,6 +14,7 @@ public class CeilingQuadSpawner : MonoBehaviour
     [SerializeField] private float offsetAboveTable = 0.1f;
     [SerializeField] private bool overrideJarScale = true;
 
+    
     private void Start()
     {
         Debug.Log("🔄 Waiting for MRUK scene to load...");

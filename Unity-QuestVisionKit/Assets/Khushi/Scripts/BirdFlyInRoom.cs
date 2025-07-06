@@ -13,9 +13,12 @@ public class BirdFlyInRoom : MonoBehaviour
     [SerializeField] Transform leftPalm;
     [SerializeField] Transform rightPalm;
 
-    public float handTogetherThreshold = 0.1f;
+    public float handTogetherThreshold = 1f;
     public float landingSmoothTime = 1f;
-
+    
+    private float startupGracePeriod = 2f;
+    private float elapsedSinceStart = 0f;
+    
     private bool birdIsLanding = false;
     private bool isTakingOff = false;
 
@@ -26,9 +29,11 @@ public class BirdFlyInRoom : MonoBehaviour
     private Animator animator;
     private Canvas birdCanvas;
     private TextMeshProUGUI messageText;
+    private AudioSource typingAudio;
     void Start()
     {
         animator = GetComponent<Animator>();
+        typingAudio = GetComponent<AudioSource>();
         birdCanvas = GetComponentInChildren<Canvas>(true); // true allows finding disabled canvas
        /* if (birdCanvas != null)
             birdCanvas.enabled = false; // make sure it starts hidden */
@@ -77,6 +82,10 @@ public class BirdFlyInRoom : MonoBehaviour
 
     void Update()
     {
+        // ⏳ Wait for grace period before doing anything
+        elapsedSinceStart += Time.deltaTime;
+        if (elapsedSinceStart < startupGracePeriod) return;
+
         if (roomBounds.size == Vector3.zero) return;
 
         bool handsClose = false;
@@ -96,13 +105,13 @@ public class BirdFlyInRoom : MonoBehaviour
             if (birdIsLanding)
             {
                 birdIsLanding = false;
-                // 🔴 Disable canvas immediately on takeoff
+
                 if (birdCanvas != null)
                 {
                     birdCanvas.gameObject.SetActive(false);
                     Debug.Log("🔴 Canvas hidden on takeoff");
-                } 
-                
+                }
+
                 StartCoroutine(SmoothTakeoff());
             }
         }
@@ -267,10 +276,17 @@ public class BirdFlyInRoom : MonoBehaviour
     IEnumerator TypeMessage(string fullMessage, float delay = 0.05f)
     {
         messageText.text = "";
+
+        if (typingAudio != null)
+            typingAudio.Play();
+
         foreach (char c in fullMessage)
         {
             messageText.text += c;
             yield return new WaitForSeconds(delay);
         }
+
+        if (typingAudio != null)
+            typingAudio.Stop();
     }
 }
