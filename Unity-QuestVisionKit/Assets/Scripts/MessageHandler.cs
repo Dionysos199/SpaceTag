@@ -57,8 +57,8 @@ public class MessageHandler
                 break;
 
             case "Birthday":
-                Debug.Log($"[Birthday] Prefab: {data.PrefabID}, Place: {data.PlaceID}, AI Prompt: {data.AIPrompt}");
-                spawnDynamically.OnPrefabIDUpdated(data.PrefabID, data.PlaceID);
+                Debug.Log($"[Birthday] Scene: {data.SceneName}, Receiver: {data.UserName}");
+                SceneManager.LoadScene("Birthday");
                 if (data.AIPrompt)
                 {
                     // Handle AI prompt here
@@ -71,6 +71,7 @@ public class MessageHandler
                 break;
 
             case "spatial3D":
+                if (data.AIPrompt)  
                 Debug.Log($"[Spatial3D] Prefab: {data.PrefabID}, Place: {data.PlaceID}, AI Prompt: {data.AIPrompt}");
                 spawnDynamically.OnPrefabIDUpdated(data.PrefabID, data.PlaceID);
                 if (data.AIPrompt)
