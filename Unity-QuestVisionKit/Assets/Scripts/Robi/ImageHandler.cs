@@ -29,6 +29,8 @@ public class ImageHandler : MonoBehaviour
     private FileSystemWatcher fileSystemWatcher;
     private readonly Queue<string> imageQueue = new();
 
+    private bool waitingForPermission = false;
+
     private void Awake()
     {
         if (Application.isEditor)
@@ -40,6 +42,7 @@ public class ImageHandler : MonoBehaviour
             if (!Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead))
             {
                 Permission.RequestUserPermission(Permission.ExternalStorageRead);
+                waitingForPermission = true; // Start waiting
             }
             else
             {
@@ -48,6 +51,7 @@ public class ImageHandler : MonoBehaviour
         }
     }
 
+  
     private void OnDestroy()
     {
         if (fileSystemWatcher == null) return;
@@ -101,6 +105,15 @@ public class ImageHandler : MonoBehaviour
 
     private void Update()
     {
+        if (waitingForPermission)
+        {
+            if (Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead))
+            {
+                Debug.Log("Permission Granted! Initializing file watcher.");
+                InitializeFileSystemWatcher();
+                waitingForPermission = false; // Stop checking
+            }
+        }
         if (Application.isEditor) return;
 
         lock (imageQueue)

@@ -25,9 +25,13 @@ public class ImageGalleryManager : MonoBehaviour
     [Tooltip("The button for deleting images.")]
     [SerializeField] private Button deleteButton;
 
+    [Tooltip("A debug Text")]
+    [SerializeField] private TextMeshProUGUI debugText;
+    [SerializeField] private TextMeshProUGUI debugText2;
+
     private List<GameObject> imageContainers = new();
     private List<string> imagePaths = new(); // Maintain a list of image paths
-    private readonly string path = "/storage/emulated/0/Oculus/Screenshots/";
+    private  string path ;
     private bool suppressToggleEvent = false;
     private GameObject selectedContainer = null;
 
@@ -45,13 +49,44 @@ public class ImageGalleryManager : MonoBehaviour
         StopCheckingVisibility();
     }
 
+    private void DebugLog(string message, TextMeshProUGUI debugText)
+    {
+        Debug.Log(message); // Also logs to console.
+        if (debugText != null)
+        {
+            debugText.text = message;
+        }
+    }
+
     private void LoadAllImages()
     {
-        if (!Directory.Exists(path)) return;
+        path = Application.persistentDataPath;
+        DebugLog("Attempting to load images from: " + path, debugText);
+        if (!Directory.Exists(path))
+        {
+            DebugLog("Directory not found: " + path,debugText);
+            return;
+        }
+        var files = Directory.GetFiles(path);
+        var imageFiles = new List<string>();
+        foreach (var file in files)
+        {
+            if (file.EndsWith(".jpg", System.StringComparison.OrdinalIgnoreCase) ||
+                file.EndsWith(".jpeg", System.StringComparison.OrdinalIgnoreCase))
+            {
+                imageFiles.Add(file);
+            }
+        }
+        imagePaths = imageFiles;
 
-        imagePaths = new List<string>(Directory.GetFiles(path, "*.jpg"));
+
+        DebugLog($"Found {imagePaths.Count} images. at {Path.GetFullPath(path)}",debugText);
         RefreshLayout();
+        //DebugLog("Permission granted? " + UnityEngine.Android.Permission.HasUserAuthorizedPermission(UnityEngine.Android.Permission.ExternalStorageRead));
+        var allFiles = Directory.GetFiles(path);
+        DebugLog($"All files found: {allFiles.Length}", debugText2);
     }
+
 
     private void RefreshLayout()
     {
@@ -65,20 +100,31 @@ public class ImageGalleryManager : MonoBehaviour
 
     private IEnumerator LoadImage(string imagePath)
     {
-        var fileData = File.ReadAllBytes(imagePath);
-        Texture2D tex = new(2, 2);
+        DebugLog("Loading image from: " + imagePath, debugText);
 
-        if (tex.LoadImage(fileData))
+        // Read image file bytes
+        byte[] fileData = File.ReadAllBytes(imagePath);
+
+        // Create texture with explicit format for better compatibility
+        Texture2D tex = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+
+        // Try to load image into texture
+        bool success = tex.LoadImage(fileData);
+        if (success)
         {
+            DebugLog("Image loaded successfully: " + imagePath, debugText);
+
+            // Instantiate image in gallery
             InstantiateImage(tex, imagePath);
         }
         else
         {
-            Debug.LogError("Failed to load image from path: " + imagePath);
+            DebugLog("Failed to load image from path: " + imagePath, debugText);
         }
 
         yield return null;
     }
+
 
     private void InstantiateImage(Texture2D tex, string imagePath)
     {
