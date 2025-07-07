@@ -1,3 +1,4 @@
+
 Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --platform=Android
 --backend=burst-llvm-18
@@ -124,10 +125,15 @@ Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOu
 --target-framework=NetFramework
 --float-mode=Fast
 --generate-link-xml=Temp\burst.link.xml
+--temp-folder=D:\XRB\Khushi\Unity-QuestVisionKit\Temp\Burst
+--key-folder=D:/Unity/6000.0.39f1/Editor/Data/PlaybackEngines/AndroidPlayer
+--decode-folder=D:\XRB\Khushi\Unity-QuestVisionKit\Library\Burst
+--output=D:\XRB\Khushi\Unity-QuestVisionKit\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
 --temp-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\Burst
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.51f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Library\Burst
 --output=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOutput\tempburstlibs\arm64-v8a\lib_burst_generated
+
 --pdb-search-paths=Temp/ManagedSymbols/
 
 --method=Unity.Jobs.IJobParallelForExtensions+ParallelForJobStruct`1[[Unity.Sentis.CPUBackend+GlobalAverageVariancePoolJob, Unity.Sentis, Version=2.1.2.0, Culture=neutral, PublicKeyToken=null]], UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null::Execute(Unity.Sentis.CPUBackend+GlobalAverageVariancePoolJob&, Unity.Sentis, Version=2.1.2.0, Culture=neutral, PublicKeyToken=null|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|System.IntPtr, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089|Unity.Jobs.LowLevel.Unsafe.JobRanges&, UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null|System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089)--84f6e15c675b3973704dcd97eac0700c
@@ -142,6 +148,7 @@ Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOu
 --target-framework=NetFramework
 --float-mode=Fast
 --generate-link-xml=Temp\burst.link.xml
+
 --temp-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\Burst
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.51f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Library\Burst
@@ -211,6 +218,7 @@ Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOu
 --float-precision=Standard
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
+
 --temp-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\Burst
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.51f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Library\Burst
@@ -241,6 +249,7 @@ Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOu
 --float-precision=Standard
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
+
 --temp-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\Burst
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.51f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Library\Burst
@@ -356,6 +365,7 @@ Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOu
 --float-precision=Standard
 --target-framework=NetFramework
 --generate-link-xml=Temp\burst.link.xml
+
 --temp-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\Burst
 --key-folder=C:/Program Files/Unity/Hub/Editor/6000.0.51f1/Editor/Data/PlaybackEngines/AndroidPlayer
 --decode-folder=C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Library\Burst
@@ -363,4 +373,5 @@ Library: C:\Users\imadelkhechen\Unity\SpaceTag\Unity-QuestVisionKit\Temp\BurstOu
 --pdb-search-paths=Temp/ManagedSymbols/
 
 --method=Unity.Sentis.CPUBackend+ConvJob, Unity.Sentis, Version=2.1.2.0, Culture=neutral, PublicKeyToken=null::CanUseDepthwiseConvKernel(Unity.Sentis.CPUBackend+ConvJob*, Unity.Sentis, Version=2.1.2.0, Culture=neutral, PublicKeyToken=null)--75dfe5e48c0de75417d213538a382b19
+
 

@@ -5,6 +5,12 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
+  - enabled: 1
+    path: Assets/Khushi/khushi_mothersday.unity
+    guid: e367c2a3d6c6b534588da149437fb345
+  - enabled: 0
+    path: Assets/Khushi/khushi_NightMood.unity
+    guid: 99998682af696634b9fe286d05f95cd5
   - enabled: 0
     path: Assets/Samples/5 ImageLLM/ImageLLM.unity
     guid: e315df11792f04348a6913e0c2feac5f
