@@ -24,6 +24,10 @@ public class SaveData
     [FirestoreProperty]
     public bool AIPrompt { get; set; } = false;
 
+    [FirestoreProperty]
+    public string SceneName { get; set; } = "";
+
+
     public SaveData() { }
 
     public SaveData(string userName, string prefabID = "Cat", string placeID = "Couch")
