@@ -128,6 +128,7 @@
       },
       "url": "https://packages.unity.com"
     },
+
     "com.unity.editorcoroutines": {
       "version": "1.0.0",
       "depth": 2,
@@ -335,6 +336,7 @@
       },
       "url": "https://packages.unity.com"
     },
+
     "com.unity.xr.openxr": {
       "version": "1.14.3",
       "depth": 0,
