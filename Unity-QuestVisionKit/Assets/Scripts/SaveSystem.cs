@@ -4,7 +4,6 @@ using UnityEngine;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using System;
-using Meta.XR.ImmersiveDebugger.UserInterface.Generic;
 
 public class SaveSystem : MonoBehaviour
 {
@@ -49,6 +48,12 @@ public class SaveSystem : MonoBehaviour
                 feedbackText.text = "Failed to load users.";
             }
         });
+    }
+    [SerializeField] private DropdownPopulator usersDropdownPopulator;
+    void PopulateUserDropdown()
+    {
+        Debug.Log("[SaveSystem] Populating user dropdown with fetched users.");
+        usersDropdownPopulator.Populate(userList);
     }
 
     void PopulateDropdown()
