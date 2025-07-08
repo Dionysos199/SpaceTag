@@ -8,11 +8,15 @@ public class Vines : MonoBehaviour
     
     void Start()
     {
-        GetComponentInChildren<HandGrabInteractable>().WhenSelectingInteractorAdded.Action += PlayParticles;
+        if (particles != null)
+        {
+            particles.Stop();
+        }
     }
     
-    private void PlayParticles(HandGrabInteractor interactor)
+    void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Trigger entered by: " + other.name);
         if (particles != null)
         {
             particles.Play();
