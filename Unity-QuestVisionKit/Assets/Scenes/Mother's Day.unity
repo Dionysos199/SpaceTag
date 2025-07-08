@@ -1545,11 +1545,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpawnOnStart: 1
-  SpawnObject: {fileID: 0}
+  SpawnObject: {fileID: 2041872121}
   SpawnAmount: 1
   MaxIterations: 1000
   SpawnLocations: 3
-  Labels: 536
+  Labels: 8
   CheckOverlaps: 1
   OverrideBounds: -1
   LayerMask:
