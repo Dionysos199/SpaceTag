@@ -3,7 +3,7 @@ using System.Collections;
 
 public class BalloonFloat : MonoBehaviour
 {
-    public float buoyancyForce = 1.5f;
+    public float buoyancyForce = .1f;
     public float bounceDamping = 0.4f;
     public float ceilingCheckDistance = 5f;
 

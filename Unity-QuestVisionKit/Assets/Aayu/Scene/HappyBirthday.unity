@@ -2847,7 +2847,7 @@ GameObject:
   - component: {fileID: 512860617}
   m_Layer: 0
   m_Name: RightHand
-  m_TagString: Pin
+  m_TagString: PlayerHand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8382,7 +8382,7 @@ GameObject:
   - component: {fileID: 1357307308}
   m_Layer: 0
   m_Name: LeftHand
-  m_TagString: Pin
+  m_TagString: PlayerHand
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
