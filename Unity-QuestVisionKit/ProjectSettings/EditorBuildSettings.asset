@@ -6,10 +6,38 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Aayu/Scene/HappyBirthday.unity
-    guid: 002e414d235283648ae68e3d18f112eb
+
+    path: Assets/Khushi/khushi_mothersday.unity
+    guid: e367c2a3d6c6b534588da149437fb345
+  - enabled: 0
+    path: Assets/Khushi/khushi_NightMood.unity
+    guid: 99998682af696634b9fe286d05f95cd5
+  - enabled: 0
+    path: Assets/Samples/5 ImageLLM/ImageLLM.unity
+    guid: e315df11792f04348a6913e0c2feac5f
+  - enabled: 0
+    path: Assets/Scenes/FirebaseTestScene.unity
+    guid: 4573fe99098bb5b4a9aa6a95f46a6fa7
+  - enabled: 0
+    path: Assets/Aayu UI/Scene/UISet.unity
+    guid: 6a26129564c3f6d48bb323c9ca952ae8
+  - enabled: 1
+    path: Assets/Aayu UI/Scene/UI.unity
+    guid: 6f8ebaaf325425648b715572eb780c7b
+  - enabled: 0
+
+    path: Assets/Scenes/TestKeyboard.unity
+    guid: 408dc97a9fda23d459fc96168cbf9ce3
+  - enabled: 0
+    path: "Assets/Samples/Meta XR Interaction \u200BSDK/77.0.0/Example Scenes/UISetExamples.unity"
+    guid: 07e3686372a704147b219707ee3c6f62
+  - enabled: 1
+    path: Assets/Scenes/FirebaseTestSceneMeta.unity
+    guid: dbca535df59a6b4408a12584a7dc1a7b
+
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: 1f6e424bb69784f8e8b5df6563fe45de, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: a1a3bb74343034748bfcead56c6c2da6, type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: fe75392a6051de5428b39428846ca269, type: 2}
   m_UseUCBPForAssetBundles: 0

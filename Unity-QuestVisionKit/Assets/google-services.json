@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "237241912274",
+    "project_id": "spacetag-ca868",
+    "storage_bucket": "spacetag-ca868.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:237241912274:android:4783c01476d7c97b81560b",
+        "android_client_info": {
+          "package_name": "com.BlackWhaleStudio.UnityQuestVisionKit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDWn_oydfP97OaOhL4Q1KWE-7NFgPEhrY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

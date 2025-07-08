@@ -118,3 +118,6 @@ Assets/.avatar_sdk_sample_assets_importer.txt
 **/RuntimeActionBindings.json
 **/RuntimeActionBindings.json.meta
 .editorconfig
+Unity-QuestVisionKit/Assets/Firebase/Plugins/x86_64/FirebaseCppAuth.bundle
+Unity-QuestVisionKit/Assets/Firebase/Plugins/x86_64/FirebaseCppFirestore.bundle
+Unity-QuestVisionKit/Assets/Firebase/Plugins/x86_64/FirebaseCppApp-12_10_1.bundle
