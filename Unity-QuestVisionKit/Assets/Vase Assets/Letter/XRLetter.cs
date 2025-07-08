@@ -5,7 +5,7 @@ public class XRLetter : MonoBehaviour
 {
     [SerializeField] private GameObject uiMenu;
     [SerializeField] private AnimationClip letterAnimation;
-    
+    [SerializeField] private AnimationClip uiBounceAnimation;
     private Animator letterAnimator;
     
     void Start()
@@ -20,7 +20,7 @@ public class XRLetter : MonoBehaviour
         {
             if (letterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
             {
-                Invoke(nameof(ShowUI), 3f);
+                Invoke(nameof(ShowUI), 2f);
                 this.enabled = false;
             }
         }
@@ -30,7 +30,7 @@ public class XRLetter : MonoBehaviour
     {
         uiMenu.SetActive(true);
         
-        if (uiMenu.GetComponent<Animator>() != null)
+        if (uiMenu.GetComponent<Animator>() != null && uiBounceAnimation != null)
         {
             uiMenu.GetComponent<Animator>().Play("UIBounce");
         }
