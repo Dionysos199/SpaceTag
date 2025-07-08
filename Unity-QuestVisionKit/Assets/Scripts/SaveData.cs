@@ -25,6 +25,9 @@ public class SaveData
     public bool AIPrompt { get; set; } = false;
 
     [FirestoreProperty]
+    public string AIPrompt_Text { get; set; } = "";
+
+    [FirestoreProperty]
     public string SceneName { get; set; } = "";
 
 

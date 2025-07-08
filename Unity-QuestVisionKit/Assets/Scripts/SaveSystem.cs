@@ -237,6 +237,10 @@ public class SaveSystem : MonoBehaviour
             feedbackText.text = "Changes acknowledged.";
         }
     }
+    public string GetUsername()
+    {
+        return currentUsername;
+    }
 
 
     // Check if username already exists
