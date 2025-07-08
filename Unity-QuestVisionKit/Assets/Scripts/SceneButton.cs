@@ -7,7 +7,6 @@ public class SceneButton : MonoBehaviour
 
     [SerializeField] private SendMessageHandler sendMessageHandler;
 
-
     private void OnButtonClicked()
     {
         sendMessageHandler.SceneName = sceneName;
@@ -15,4 +14,3 @@ public class SceneButton : MonoBehaviour
         Debug.Log($"Button clicked! Scene: {sceneName}");
     }
 }
-
