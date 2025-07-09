@@ -29,10 +29,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Aayu UI/Scene/Khushi_UI.unity
     guid: 9f07a36084ed23f4ca7f1dbbc725648c
-  - enabled: 0
+  - enabled: 1
     path: Assets/Scenes/SpatialMessage.unity
     guid: df624110d32202546a7f9ce851b0319f
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/FirebaseTestSceneMeta.unity
     guid: dbca535df59a6b4408a12584a7dc1a7b
   m_configObjects:

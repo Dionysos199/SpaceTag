@@ -48,10 +48,21 @@ public class SaveSystem : MonoBehaviour
         }
     }
 
+    [SerializeField] TextMeshProUGUI DebugText1;
+
+
+    [SerializeField] private TMP_Dropdown userDropdown;
     public async void OnLoginButton()
     {
-        string enteredUsername = usernameInput.text.Trim();
 
+        //string enteredUsername = usernameInput.text.Trim();
+        string enteredUsername = userDropdown.options[userDropdown.value].text;
+
+
+        DebugText1.text = enteredUsername;
+
+        DebugText1.text = ($"sceneMessageSender is null? {sceneMessageSender == null}");
+        sceneMessageSender.SetSenderUsername(currentUsername); // This may throw
         if (string.IsNullOrEmpty(enteredUsername))
         {
             feedbackText.text = "Enter your username.";
@@ -65,8 +76,7 @@ public class SaveSystem : MonoBehaviour
             if (snapshot.Exists)
             {
                 SaveData data = snapshot.ConvertTo<SaveData>();
-                currentUsername = data.UserName;
-                sceneMessageSender.SetSenderUsername(currentUsername);
+                currentUsername = data.UserName; 
                 feedbackText.text = $"Welcome back, {data.UserName}!";
 
                 ListenToUserData(currentUsername);
@@ -79,7 +89,7 @@ public class SaveSystem : MonoBehaviour
         catch (Exception ex)
         {
             Debug.LogError("Login failed: " + ex.Message);
-            feedbackText.text = "Login error.";
+            feedbackText.text = "Login failed: " + ex.Message;
         }
     }
 

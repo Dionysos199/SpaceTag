@@ -132,11 +132,9 @@ public class SaveSystemOld : MonoBehaviour
             }
         });
     }
-
     public async void OnLoginButton()
     {
         string enteredUsername = usernameInput.text.Trim();
-
         if (string.IsNullOrEmpty(enteredUsername))
         {
             feedbackText.text = "Enter your username.";
