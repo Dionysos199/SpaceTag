@@ -20,7 +20,7 @@ public class XRLetter : MonoBehaviour
         {
             if (letterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.75f)
             {
-                Invoke(nameof(ShowUI), 1f);
+                Invoke(nameof(ShowUI), .2f);
                 this.enabled = false;
             }
         }
