@@ -5,7 +5,7 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 1
+  - enabled: 0
     path: Assets/Khushi/khushi_mothersday.unity
     guid: e367c2a3d6c6b534588da149437fb345
   - enabled: 0
@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Aayu UI/Scene/UISet.unity
     guid: 6a26129564c3f6d48bb323c9ca952ae8
-  - enabled: 1
+  - enabled: 0
     path: Assets/Aayu UI/Scene/UI.unity
     guid: 6f8ebaaf325425648b715572eb780c7b
   - enabled: 1
