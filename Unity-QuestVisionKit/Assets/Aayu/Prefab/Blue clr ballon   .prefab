@@ -49,7 +49,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 1
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -3265,7 +3265,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 4
   m_Drag: 2
-  m_AngularDrag: 0.5
+  m_AngularDrag: 1
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -3315,7 +3315,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d4d2120388d7084897cf908d08acb38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buoyancyForce: 1
+  buoyancyForce: 0.5
   bounceDamping: 0.4
   ceilingCheckDistance: 1
 --- !u!1 &9017794499621347652
@@ -3347,7 +3347,7 @@ Transform:
   m_GameObject: {fileID: 9017794499621347652}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0.7071068, w: 0}
-  m_LocalPosition: {x: 0.0004988512, y: -0.217, z: 0.0011665821}
+  m_LocalPosition: {x: 0.0004988512, y: -0.21700001, z: 0.0011665821}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3376,8 +3376,8 @@ MonoBehaviour:
       color: {r: 1, g: 1, b: 1, a: 1}
       normal: {x: 0, y: -1.0000046, z: -0.0000046491623}
       size: 1
-      tangent: {x: 0, y: -0.0000003874302, z: -0.0911726}
-      tangent2: {x: 0, y: 0.0000003874302, z: 0.09117242}
+      tangent: {x: 0, y: -0.0000003874302, z: -0.09117258}
+      tangent2: {x: 0, y: 0.0000003874302, z: 0.091172345}
   _transformSize: 1
   _transformNormals: 1
   _transformTangents: 1

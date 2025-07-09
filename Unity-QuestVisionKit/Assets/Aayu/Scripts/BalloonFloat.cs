@@ -1,4 +1,4 @@
-using UnityEngine;
+/*using UnityEngine;
 using System.Collections;
 
 public class BalloonFloat : MonoBehaviour
@@ -62,9 +62,9 @@ public class BalloonFloat : MonoBehaviour
             ceilingFound = true;
         }
     }
-}
+}*/
 
-/*
+
 using UnityEngine;
 using System.Collections;
 
@@ -84,7 +84,7 @@ public class BalloonFloat : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.useGravity = false;
         StartCoroutine(FindCeiling());
-        StartCoroutine(EnableFloatAfterDelay());
+        //StartCoroutine(EnableFloatAfterDelay());
     }
 
     void FixedUpdate()
@@ -112,11 +112,11 @@ public class BalloonFloat : MonoBehaviour
         }
     }
 
-    IEnumerator EnableFloatAfterDelay()
+    /*IEnumerator EnableFloatAfterDelay()
     {
         yield return new WaitForSeconds(1f); // Delay before balloon floats
         canFloat = true;
-    }
+    }*/
 
     IEnumerator FindCeiling()
     {
@@ -135,4 +135,3 @@ public class BalloonFloat : MonoBehaviour
         ceilingFound = true;
     }
 }
-*/

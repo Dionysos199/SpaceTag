@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6433270635034642014}
   - component: {fileID: 380289794761784365}
   - component: {fileID: 6184920365347614559}
-  - component: {fileID: 8839822045771687427}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Balloon
@@ -43,10 +42,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2354419256413289058}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 0.5
-  m_LinearDamping: 0
-  m_AngularDamping: 2
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -84,22 +83,6 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.08
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8839822045771687427
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2354419256413289058}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4eae3b93be294ca46891ebde5ce946c4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  confettiEffectPrefab: {fileID: 5700784828077083704, guid: ed962e35f7fa6f34f8d27aa6d19ea293, type: 3}
-  chocolateRewardPrefab: {fileID: 0}
-  popSound: {fileID: 8300000, guid: 5904037efb38249459d652f37c5f3d24, type: 3}
-  chocolateSpawnHeight: 0.1
 --- !u!1 &3837238424935606436
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,10 +209,10 @@ Rigidbody:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4613189816706222811}
-  serializedVersion: 5
+  serializedVersion: 4
   m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
+  m_Drag: 0
+  m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
