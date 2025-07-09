@@ -44,7 +44,7 @@ public class CeilingQuadSpawner : MonoBehaviour
                 // Handle Table
                 if ((anchor.Label & MRUKAnchor.SceneLabels.STORAGE) != 0)
                 {
-                    SpawnJarOnTable(anchor);
+                    //SpawnJarOnTable(anchor);
                 }
             }
         }
