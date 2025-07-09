@@ -3,46 +3,70 @@ using UnityEngine;
 
 public class LetterBehaviour : MonoBehaviour
 {
-    public GameObject letterPrefab;
-    public float animationDuration = 1f;
+ public GameObject letterPrefab;
+    public OVRHand leftHand;
+    public OVRHand rightHand;
+    public Transform spawnPoint;
+    public Animator envelopeAnimation;
     
-    private bool animationDone = false;
     private bool letterSpawned = false;
+    private bool wasLeftPinching = false;
+    private bool wasRightPinching = false;
+    private bool animationComplete = false;
     
-    void OnTriggerEnter(Collider other)
+    void Update()
     {
-        if (other.GetComponent<OVRHand>() && !animationDone && !letterSpawned)
+        // Check if animation is complete
+        if (!animationComplete && envelopeAnimation != null)
         {
-            StartCoroutine(PlayAnimation());
+            animationComplete = envelopeAnimation.GetCurrentAnimatorStateInfo(0).normalizedTime >= 1.0f;
+            if (animationComplete)
+            {
+                Debug.Log("Animation complete - pinch now available!");
+            }
         }
-        else if (other.GetComponent<OVRHand>() && animationDone && !letterSpawned)
+        
+        // Only check for pinching after animation is done
+        if (animationComplete && !letterSpawned)
         {
-            SpawnLetter(other.transform.position);
+            CheckPinchGesture();
         }
     }
     
-    IEnumerator PlayAnimation()
+    void CheckPinchGesture()
     {
-        // Simple shake animation
-        Vector3 originalPos = transform.position;
-        float timer = 0;
-        
-        while (timer < animationDuration)
+        // Check left hand pinching
+        if (leftHand.IsTracked)
         {
-            transform.position = originalPos + Random.insideUnitSphere * 0.1f;
-            timer += Time.deltaTime;
-            yield return null;
+            bool isLeftPinching = leftHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
+            
+            if (!wasLeftPinching && isLeftPinching)
+            {
+                Debug.Log("Left hand pinch detected!");
+                SpawnLetter(leftHand.transform.position);
+            }
+            wasLeftPinching = isLeftPinching;
         }
         
-        transform.position = originalPos;
-        animationDone = true;
+        // Check right hand pinching
+        if (rightHand.IsTracked)
+        {
+            bool isRightPinching = rightHand.GetFingerIsPinching(OVRHand.HandFinger.Index);
+            
+            if (!wasRightPinching && isRightPinching)
+            {
+                Debug.Log("Right hand pinch detected!");
+                SpawnLetter(rightHand.transform.position);
+            }
+            wasRightPinching = isRightPinching;
+        }
     }
     
-    void SpawnLetter(Vector3 spawnPos)
+    void SpawnLetter(Vector3 handPosition)
     {
+        Debug.Log("Spawning letter");
+        Vector3 spawnPos = spawnPoint ? spawnPoint.position : handPosition;
         GameObject letter = Instantiate(letterPrefab, spawnPos, Random.rotation);
-        letter.AddComponent<OVRGrabbable>();
         letterSpawned = true;
-        gameObject.SetActive(false);
     }
 }
