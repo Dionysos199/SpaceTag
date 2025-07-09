@@ -18,7 +18,7 @@ public class XRLetter : MonoBehaviour
     {
         if (letterAnimator.GetCurrentAnimatorStateInfo(0).IsName(letterAnimation.name))
         {
-            if (letterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.95f)
+            if (letterAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime >= 0.75f)
             {
                 Invoke(nameof(ShowUI), 1f);
                 this.enabled = false;
