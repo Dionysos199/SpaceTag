@@ -131,6 +131,9 @@ public class BalloonSpawner : MonoBehaviour
     public Vector3 spawnAreaCenter = Vector3.zero;
     public Vector3 spawnAreaSize = new Vector3(5, 0, 5);
     public float floorOffsetY = 0.1f;
+    [SerializeField] Sprite[] sprites;
+    
+    
 
     void Start()
     {
@@ -153,7 +156,8 @@ public class BalloonSpawner : MonoBehaviour
             Vector3 spawnPos = GetRandomPointOnFloor();
             GameObject randomBalloon = GetRandomBalloonPrefab();
             Instantiate(randomBalloon, spawnPos, Quaternion.identity);
-
+            //if(i<sprites.Length)
+            //randomBalloon.GetComponent<Pictures>().polaroid = sprites[i];
             yield return new WaitForSeconds(spawnDelay); // Delay between each balloon
         }
     }
