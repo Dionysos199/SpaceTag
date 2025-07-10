@@ -10,7 +10,7 @@ public class FlowerSpawning : MonoBehaviour
     [SerializeField] private Transform originPoint; // Reference to spawn point
     
     [Header("Text Settings")]
-    [SerializeField] private string textToSpell = "HELLO WORLD";
+    [SerializeField] private string textToSpell = "HAPPY\nMOTHERS DAY!!";
     [SerializeField] private float letterWidth = 3f;
     [SerializeField] private float letterHeight = 4f;
     [SerializeField] private float letterSpacing = 1f;
