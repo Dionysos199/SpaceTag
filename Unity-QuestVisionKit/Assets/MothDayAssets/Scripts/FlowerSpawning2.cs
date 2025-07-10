@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FlowerSpawning : MonoBehaviour
+public class FlowerSpawning2 : MonoBehaviour
 {
     [Header("Prefabs")]
     [SerializeField] private GameObject flowerPrefab;
