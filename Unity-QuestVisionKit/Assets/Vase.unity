@@ -3603,6 +3603,67 @@ Transform:
   m_Children: []
   m_Father: {fileID: 982576871}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &391892089
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 5519093550631175636, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_Name
+      value: FlowerManager2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.48799998
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.318
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 8894971836951530311, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7380967653460423685, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 5519093550631175636, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 541306477}
+  m_SourcePrefab: {fileID: 100100000, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
 --- !u!1 &393189497
 GameObject:
   m_ObjectHideFlags: 0
@@ -4117,6 +4178,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 517482010}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &541306476 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5519093550631175636, guid: 9339d031c91bb4541b1ef227ea77a4d5, type: 3}
+  m_PrefabInstance: {fileID: 391892089}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &541306477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 541306476}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19397690f3c68d64c9836b05ca7ad84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flowerPrefab: {fileID: 0}
+  originPoint: {fileID: 0}
+  textToSpell: HAPPY MOTHERS DAY!!
+  letterWidth: 3
+  letterHeight: 4
+  letterSpacing: 1
+  flowerDensity: 0.5
+  flowersPerPoint: 2
+  flowerScatter: 0.1
+  globalScale: 0.1
+  useRandomScale: 1
+  scaleRange: {x: 0.8, y: 1.2}
+  densityMultiplier: 2
+  waveSpeed: 0.1
+  growDuration: 0.5
+  playWaveOnStart: 1
 --- !u!1 &544868157
 GameObject:
   m_ObjectHideFlags: 0
@@ -11235,6 +11329,67 @@ Transform:
   - {fileID: 1876556239}
   m_Father: {fileID: 555829915}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &913647550
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3083880760681582399, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_Name
+      value: FlowerManager1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.969
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.623
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
+    - target: {fileID: 7076999570665801432, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 7354083381227108246, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3083880760681582399, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1930424577}
+  m_SourcePrefab: {fileID: 100100000, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
 --- !u!1 &915294736
 GameObject:
   m_ObjectHideFlags: 0
@@ -23070,6 +23225,39 @@ SkinnedMeshRenderer:
     m_Center: {x: -0.08462602, y: 0.018837288, z: -0.013709355}
     m_Extent: {x: 0.1069836, y: 0.05242701, z: 0.07775007}
   m_DirtyAABB: 0
+--- !u!1 &1930424576 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3083880760681582399, guid: e016638fec060fb46859c24b3a4e6105, type: 3}
+  m_PrefabInstance: {fileID: 913647550}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1930424577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1930424576}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 19397690f3c68d64c9836b05ca7ad84e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  flowerPrefab: {fileID: 0}
+  originPoint: {fileID: 0}
+  textToSpell: HAPPY MOTHERS DAY!!
+  letterWidth: 3
+  letterHeight: 4
+  letterSpacing: 1
+  flowerDensity: 0.5
+  flowersPerPoint: 2
+  flowerScatter: 0.1
+  globalScale: 0.1
+  useRandomScale: 1
+  scaleRange: {x: 0.8, y: 1.2}
+  densityMultiplier: 2
+  waveSpeed: 0.1
+  growDuration: 0.5
+  playWaveOnStart: 1
 --- !u!1 &1939344820
 GameObject:
   m_ObjectHideFlags: 0
@@ -29398,3 +29586,5 @@ SceneRoots:
   - {fileID: 1744233903}
   - {fileID: 1051306735}
   - {fileID: 628955304}
+  - {fileID: 913647550}
+  - {fileID: 391892089}
