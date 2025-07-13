@@ -182,7 +182,7 @@ public class BirdFlyInRoom : MonoBehaviour
         if (birdCanvas != null && messageText != null)
         {
             birdCanvas.gameObject.SetActive(true);
-            StartCoroutine(TypeMessage("You are the best mom!  Thank you for always loving and taking care of me."));
+            StartCoroutine(TypeMessage("You annoy me less than everyone else. That’s love."));
         }
     } 
     

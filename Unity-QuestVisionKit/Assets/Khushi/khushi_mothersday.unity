@@ -7819,9 +7819,6 @@ MonoBehaviour:
   ceilingPrefab: {fileID: 2916226745627981108, guid: 758980675576a97468e066ce0110e8c9, type: 3}
   offsetBelowCeiling: 0.15
   overrideCeilingScale: 1
-  roomParticlePrefab: {fileID: 1293533286}
-  offsetBelowRoomCeiling: 0.2
-  spawnRoomParticle: 1
 --- !u!82 &587863654
 AudioSource:
   m_ObjectHideFlags: 0
@@ -15873,11 +15870,6 @@ Transform:
   - {fileID: 857500168}
   m_Father: {fileID: 805502626}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1293533286 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4772634663576830964, guid: e1385af346f4e624eb313ec1ea4fcd7e, type: 3}
-  m_PrefabInstance: {fileID: 804627372}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1295112188
 GameObject:
   m_ObjectHideFlags: 0
@@ -19125,7 +19117,7 @@ MonoBehaviour:
   SpawnOnStart: 1
   MeshMaterial: {fileID: 2100000, guid: 336256ae603b3f1479896539e0d4801c, type: 2}
   Colliders: 1
-  CutHoles: 0
+  CutHoles: 96
   castShadows: 0
   hideMesh: 0
   Layer: 0
