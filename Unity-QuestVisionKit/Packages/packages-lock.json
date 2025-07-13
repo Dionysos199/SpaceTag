@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.learnxr.core": {
+      "version": "https://github.com/dilmerv/com.learnxr.core.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "6f417cd90787a570cd2d042b32ed3ae46d34bca9"
+    },
     "com.meta.xr.mrutilitykit": {
       "version": "72.0.0",
       "depth": 0,
@@ -98,7 +105,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ai.navigation": {
-      "version": "2.0.7",
+      "version": "2.0.8",
       "depth": 1,
       "source": "registry",
       "dependencies": {
