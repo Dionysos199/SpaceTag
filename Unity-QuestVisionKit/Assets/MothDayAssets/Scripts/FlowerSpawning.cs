@@ -238,15 +238,24 @@ public class FlowerSpawning : MonoBehaviour
                 AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth, letterHeight));
                 AddLine(points, new Vector2(letterWidth * 0.5f, 0), new Vector2(letterWidth * 0.5f, letterHeight));
                 break;
-                
+
             case "U":
-                AddLine(points, new Vector2(0, letterHeight * 0.3f), new Vector2(0, letterHeight));
+                // Left vertical line
+                AddLine(points, new Vector2(0, letterHeight), new Vector2(0, letterHeight * 0.3f));
+
+                // Diagonal from left to bottom center
+                AddLine(points, new Vector2(0, letterHeight * 0.3f), new Vector2(letterWidth * 0.5f, 0));
+
+                // Diagonal from bottom center to right
+                AddLine(points, new Vector2(letterWidth * 0.5f, 0), new Vector2(letterWidth, letterHeight * 0.3f));
+
+                // Right vertical line
                 AddLine(points, new Vector2(letterWidth, letterHeight * 0.3f), new Vector2(letterWidth, letterHeight));
-                AddLine(points, Vector2.zero, new Vector2(letterWidth * 0.2f, letterHeight * 0.3f));
-                AddLine(points, new Vector2(letterWidth * 0.2f, letterHeight * 0.3f), new Vector2(letterWidth * 0.8f, letterHeight * 0.3f));
-                AddLine(points, new Vector2(letterWidth * 0.8f, letterHeight * 0.3f), new Vector2(letterWidth, 0));
                 break;
-                
+
+
+
+
             case "V":
                 AddLine(points, new Vector2(0, letterHeight), new Vector2(letterWidth * 0.5f, 0));
                 AddLine(points, new Vector2(letterWidth, letterHeight), new Vector2(letterWidth * 0.5f, 0));
