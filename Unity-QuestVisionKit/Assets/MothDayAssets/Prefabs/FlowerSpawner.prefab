@@ -50,8 +50,8 @@ MonoBehaviour:
   letterWidth: 3
   letterHeight: 4
   letterSpacing: 1
-  flowerDensity: 0.5
-  flowersPerPoint: 2
+  flowerDensity: 0.2
+  flowersPerPoint: 1
   flowerScatter: 0.1
   globalScale: 0.1
   useRandomScale: 1
